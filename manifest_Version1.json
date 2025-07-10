@@ -1,0 +1,21 @@
+{
+  "name": "Flatbush Safety Patrol",
+  "short_name": "FSP",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#32cd32",
+  "description": "A professional web app for the Flatbush Safety Patrol",
+  "icons": [
+    {
+      "src": "1748288925383.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "1748288925383.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
