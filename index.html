@@ -242,5 +242,20 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="module" src="main.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Map Modal -->
+<div id="mapModal" class="modal" style="display:none;position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
+  <div style="background:#fff;padding:20px;border-radius:10px;position:relative;max-width:90vw;max-height:80vh;">
+    <span id="closeMapModal" style="position:absolute;top:10px;right:15px;cursor:pointer;font-size:22px;">&times;</span>
+    <div id="map" style="width:400px;height:300px;"></div>
+    <button id="confirmLocationBtn">Confirm Location</button>
+  </div>
+</div>
+<!-- Big Map Modal -->
+<div id="bigMapModal" class="modal" style="display:none;position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;">
+  <div style="background:#fff;padding:20px;border-radius:10px;position:relative;">
+    <span id="closeBigMapModal" style="position:absolute;top:10px;right:15px;cursor:pointer;font-size:22px;">&times;</span>
+    <div id="bigMap" style="width:80vw;height:60vh;"></div>
+  </div>
+</div>
 </body>
 </html>
