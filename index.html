@@ -142,8 +142,28 @@
       <div class="typing-dot"></div>
       <span>Someone is typing...</span>
   </div>
-  <button id="report-incident-btn">Report a Call</button>
-<div id="mapPreviewContainer"></div>
+  <!-- Report Incident Button -->
+<button id="report-incident-btn">Report a Call</button>
+
+<!-- Report Incident Modal -->
+<div id="incident-modal" class="hidden">
+  <div class="modal-content">
+    <h3>Report Incident</h3>
+    <textarea id="incident-desc" placeholder="Describe the incident"></textarea>
+    <div id="incident-map" style="height:200px;"></div>
+    <button id="submit-incident">Submit</button>
+    <button id="close-incident-modal">Cancel</button>
+  </div>
+</div>
+
+<!-- Big Map Modal -->
+<div id="big-map-modal" class="hidden">
+  <div class="modal-content">
+    <div id="big-incident-map" style="height:400px;"></div>
+    <button id="close-big-map-modal">Close</button>
+  </div>
+</div>
+// <div id="mapPreviewContainer"></div>
   <button id="send-button">Send</button>
   <button id="fullscreen-toggle" style="margin-top:10px;">Full Screen</button>
   <button class="back-button" id="back-to-main">Back</button>
@@ -244,20 +264,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="module" src="main.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <!-- Map Modal -->
-<div id="mapModal" class="modal" style="display:none;position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
-  <div style="background:#fff;padding:20px;border-radius:10px;position:relative;max-width:90vw;max-height:80vh;">
-    <span id="closeMapModal" style="position:absolute;top:10px;right:15px;cursor:pointer;font-size:22px;">&times;</span>
-    <div id="map" style="width:400px;height:300px;"></div>
-    <button id="confirmLocationBtn">Confirm Location</button>
-  </div>
-</div>
-<!-- Big Map Modal -->
-<div id="bigMapModal" class="modal" style="display:none;position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;">
-  <div style="background:#fff;padding:20px;border-radius:10px;position:relative;">
-    <span id="closeBigMapModal" style="position:absolute;top:10px;right:15px;cursor:pointer;font-size:22px;">&times;</span>
-    <div id="bigMap" style="width:80vw;height:60vh;"></div>
-  </div>
 </div>
 </body>
 </html>
