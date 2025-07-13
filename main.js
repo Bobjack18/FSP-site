@@ -1548,3 +1548,79 @@ document.getElementById('clear-signups').addEventListener('click', () => {
 
 
   });
+// Show/Hide Modals
+document.getElementById('report-incident-btn').onclick = () => {
+  document.getElementById('incident-modal').classList.remove('hidden');
+  setTimeout(initIncidentMap, 100); // To ensure modal is visible
+};
+document.getElementById('close-incident-modal').onclick = () => {
+  document.getElementById('incident-modal').classList.add('hidden');
+};
+
+// Incident Map
+let incidentLatLng = null;
+function initIncidentMap() {
+  const map = L.map('incident-map').setView([40.65, -73.95], 13); // Default to Flatbush
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  let marker = null;
+  map.on('click', function(e) {
+    incidentLatLng = e.latlng;
+    if (marker) map.removeLayer(marker);
+    marker = L.marker(e.latlng).addTo(map);
+  });
+}
+
+// Submit Incident
+document.getElementById('submit-incident').onclick = function() {
+  const desc = document.getElementById('incident-desc').value.trim();
+  if (!desc || !incidentLatLng) {
+    alert("Please provide a description and location");
+    return;
+  }
+  // Save to Firebase (add a 'location' field)
+  push(ref(database, 'messages'), {
+    text: desc,
+    location: { lat: incidentLatLng.lat, lng: incidentLatLng.lng },
+    timestamp: serverTimestamp(),
+    sender: user.displayName || user.email || 'Anonymous'
+  });
+  document.getElementById('incident-modal').classList.add('hidden');
+  document.getElementById('incident-desc').value = '';
+  incidentLatLng = null;
+};
+
+// Render Map in Chat Messages
+function renderMessage(msg) {
+  const container = document.createElement('div');
+  container.innerText = msg.text;
+  if (msg.location) {
+    const mapDiv = document.createElement('div');
+    mapDiv.style.width = '120px';
+    mapDiv.style.height = '80px';
+    mapDiv.style.cursor = 'pointer';
+    mapDiv.className = 'mini-map';
+    container.appendChild(mapDiv);
+    // Initialize small map after element is in DOM
+    setTimeout(() => {
+      const map = L.map(mapDiv, { attributionControl: false, zoomControl: false, dragging: false, scrollWheelZoom: false }).setView([msg.location.lat, msg.location.lng], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      L.marker([msg.location.lat, msg.location.lng]).addTo(map);
+      mapDiv.onclick = () => showBigMap(msg.location);
+    }, 100);
+  }
+  return container;
+}
+
+// Show big map modal
+function showBigMap(location) {
+  document.getElementById('big-map-modal').classList.remove('hidden');
+  setTimeout(() => {
+    const map = L.map('big-incident-map').setView([location.lat, location.lng], 17);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    L.marker([location.lat, location.lng]).addTo(map);
+  }, 100);
+}
+document.getElementById('close-big-map-modal').onclick = function() {
+  document.getElementById('big-map-modal').classList.add('hidden');
+  document.getElementById('big-incident-map').innerHTML = '';
+};
