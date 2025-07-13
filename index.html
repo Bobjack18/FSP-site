@@ -241,6 +241,80 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="module" src="main.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Put this at the END of index.html before </body> -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+let selectedLatLng = null, marker = null, previewMap = null;
+
+document.getElementById('reportCallBtn').onclick = function() {
+  document.getElementById('mapModal').style.display = 'flex';
+  setTimeout(initMap, 100);
+};
+
+document.getElementById('closeMapModal').onclick = function() {
+  document.getElementById('mapModal').style.display = 'none';
+  if (window.pickMap) window.pickMap.remove();
+  selectedLatLng = null; marker = null;
+};
+
+function initMap() {
+  if (window.pickMap) window.pickMap.remove();
+  window.pickMap = L.map('map').setView([31.7683, 35.2137], 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(window.pickMap);
+  window.pickMap.on('click', function(e) {
+    selectedLatLng = e.latlng;
+    if (marker) marker.remove();
+    marker = L.marker(selectedLatLng).addTo(window.pickMap);
+  });
+}
+
+document.getElementById('confirmLocationBtn').onclick = function() {
+  if (!selectedLatLng) { alert('Please select a location.'); return; }
+  document.getElementById('mapModal').style.display = 'none';
+  if (window.pickMap) window.pickMap.remove();
+  addMapPreview(selectedLatLng.lat, selectedLatLng.lng);
+};
+
+function addMapPreview(lat, lng) {
+  const container = document.getElementById('mapPreviewContainer');
+  container.innerHTML = `<div class="map-preview" id="miniMap" style="width:120px;height:90px;margin-top:10px;cursor:pointer;border:1px solid #ccc;border-radius:4px;display:inline-block;overflow:hidden;"></div>`;
+  setTimeout(() => {
+    if (previewMap) previewMap.remove();
+    previewMap = L.map('miniMap', {
+      zoomControl: false, attributionControl: false, dragging: false,
+      scrollWheelZoom: false, doubleClickZoom: false
+    }).setView([lat, lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(previewMap);
+    L.marker([lat, lng]).addTo(previewMap);
+    document.getElementById('miniMap').onclick = function() {
+      openBigMapModal(lat, lng);
+    };
+  }, 100);
+}
+
+function openBigMapModal(lat, lng) {
+  document.getElementById('bigMapModal').style.display = 'flex';
+  setTimeout(() => {
+    if (window.bigMapInstance) window.bigMapInstance.remove();
+    window.bigMapInstance = L.map('bigMap').setView([lat, lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(window.bigMapInstance);
+    L.marker([lat, lng]).addTo(window.bigMapInstance);
+  }, 100);
+}
+
+document.getElementById('closeBigMapModal').onclick = function() {
+  document.getElementById('bigMapModal').style.display = 'none';
+  if (window.bigMapInstance) window.bigMapInstance.remove();
+};
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.getElementById('mapModal').style.display = 'none';
+    document.getElementById('bigMapModal').style.display = 'none';
+    if (window.pickMap) window.pickMap.remove();
+    if (window.bigMapInstance) window.bigMapInstance.remove();
+  }
+});
+</script>
 </body>
 </html>
