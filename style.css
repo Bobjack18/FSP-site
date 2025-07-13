@@ -1353,3 +1353,12 @@ body.dark-theme ::-webkit-scrollbar-thumb:hover {
   0% { transform: rotate(0deg) translateX(10px) rotate(0deg); }
   100% { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
 }
+.hidden { display: none; }
+#incident-modal, #big-map-modal {
+  position: fixed; top:0; left:0; width:100vw; height:100vh;
+  background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff; padding: 20px; border-radius: 8px; min-width: 300px;
+}
