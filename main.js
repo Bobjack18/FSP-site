@@ -68,7 +68,10 @@ const ADMIN_EMAIL = 'flatbushpatrol101@gmail.com'; // Replace with the actual ad
   setInterval(updatePresenceFromLoginHistory, 60000);
   updatePresenceFromLoginHistory();
 
-
+let user = null;
+firebase.auth().onAuthStateChanged(function(u) {
+  user = u;
+});
   // =================== Theme toggle ====================
   const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
