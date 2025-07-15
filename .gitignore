@@ -1,0 +1,23 @@
+# Node and dependency files
+node_modules/
+.env
+.DS_Store
+*.log
+# OS and editor files
+Thumbs.db
+.idea/
+.vscode/
+# Build output
+dist/
+build/
+# Misc
+*.swp
+*.swo
+# Firebase local emulators
+firebase-debug.log
+.firebaserc
+.firebase/
+# Python HTTP server artifacts
+__pycache__/
+# Service worker cache
+service-worker.js.map

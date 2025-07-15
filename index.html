@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlatbushSafetyPatrol1</title>
+  <link rel="icon" type="image/jpeg" href="icon.jpg">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body class="dark-theme">
+<div class="plasma-field"></div>
+ <div class="quantum-field">
+    <div class="quantum-particle" style="top: 10%; left: 15%;"></div>
+    <div class="quantum-particle" style="top: 30%; left: 60%;"></div>
+    <div class="quantum-particle" style="top: 60%; left: 25%;"></div>
+    <div class="quantum-particle" style="top: 80%; left: 75%;"></div>
+    <div class="quantum-particle" style="top: 40%; left: 90%;"></div>
+  </div>
+
+<!-- Top right neon light icon -->
+<div id="top-right-icon" title="Neon Light Icon" style="position: fixed; top: 10px; right: 10px; cursor: pointer; z-index: 1000;">
+  <img src="https://i.ibb.co/KjFzrqpn/ui-icon-neon-light-isolated-260nw-1667680261.png" alt="Neon Light Icon" />
+</div>
+
+<!-- Settings Icon (clickable to go to settings page) -->
+<div id="settings-icon" title="Settings" style="
+  position: fixed;
+  top: 1px;
+  right: 5px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+">
+  <img src="https://i.ibb.co/KjFzrqpn/ui-icon-neon-light-isolated-260nw-1667680261.png" alt="Settings Icon" style="width: 40px; height: auto;" />
+</div>
+
+<!-- Theme toggle switch -->
+<div id="theme-toggle-container">
+  <span style="margin-right:8px;">Dark Mode</span>
+  <label class="switch" style="margin: 0 10px;">
+    <input type="checkbox" id="theme-toggle" />
+    <span class="slider"></span>
+  </label>
+  <span style="margin-left:8px;">Light Mode</span>
+</div>
+
+<!-- Welcome Screen -->
+<div class="container" id="welcome-screen">
+<h2>Welcome to the FSP Web App!</h2>
+  <div id="welcome-message">Please log in or sign up to continue!</div>
+  <button id="show-login">Login➡</button>
+  <button id="show-signup" style="margin-top:10px;">Sign Up➡</button>
+</div>
+
+<!-- Login Form -->
+<div class="container hidden" id="login-form">
+  <h2>Login</h2>
+  <input type="email" id="login-email" placeholder="Email" />
+  <div class="password-container" style="position: relative; margin-bottom: 15px;">
+    <input type="password" id="login-password" placeholder="Password" style="width:100%; padding-right:40px;" />
+    <button type="button" class="toggle-password" aria-label="Show/Hide Password">Show Password</button>
+  </div>
+  <label style="display:flex; align-items:center; margin-bottom:10px;">
+    <input type="checkbox" id="remember-me" />
+    <span style="margin-left:8px;">Remember Me</span>
+  </label>
+  <div style="text-align:right; margin-bottom:10px;">
+    <button class="toggle-link" id="forgot-password">Forgot Password?</button>
+  </div>
+  <div id="login-error" style="color:red; font-size:0.9em; margin-bottom:10px;"></div>
+  <button id="login-submit">Login</button>
+  <button id="login-with-nfc-button" style="background-color: #007bff; color: white; padding: 10px; margin-top: 15px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">
+    Login with NFC Tag
+  </button>
+  <p id="login-nfc-status" style="margin-top: 10px; font-size: 0.9em; color: #fff; text-align: center;"></p>
+  <div id="login-liquid-loader" class="liquid-loader hidden" style="margin: 20px auto;"></div>
+  <div class="toggle-link" id="to-signup">Don't have an account? Sign Up</div>
+  <div class="toggle-link" id="to-welcome">Back to Welcome</div>
+</div>
+
+<!-- Sign Up Form -->
+<div class="container hidden" id="signup-form">
+  <h2>Sign Up</h2>
+  <input type="text" id="signup-name" placeholder="Full Name" />
+  <input type="email" id="signup-email" placeholder="Email" />
+  <div class="password-container" style="position: relative; margin-bottom: 15px;">
+    <input type="password" id="signup-password" placeholder="Password" style="width:100%; padding-right:40px;" />
+    <button type="button" class="toggle-password" aria-label="Show/Hide Password">Show/Hide Password</button>
+  </div>
+  <button id="signup-submit">Sign Up</button>
+  <div id="signup-liquid-loader" class="liquid-loader hidden" style="margin: 20px auto;"></div>
+  <div class="toggle-link" id="to-login">Already have an account? Login</div>
+  <div class="toggle-link" id="to-welcome2">Back to Welcome</div>
+</div>
+
+<!-- Main Content (post-login) -->
+<div class="container hidden" id="main-content" style="margin-top:80px;">
+  <div id="welcome-area" style="text-align:center;">
+    <div id="welcome-avatar"></div>
+    <div id="welcome-user" style="margin-top:10px; font-weight: bold; font-size: 1.2em;"></div>
+    <div id="new-messages-box" class="hidden" style="margin-top:10px; padding:10px; background-color:#222; border-radius:8px; max-height:200px; overflow-y:auto; color:#fff;"></div>
+    <div id="admin-signup-notifications" class="hidden" style="margin-top: 20px; padding: 15px; background-color: rgba(50, 205, 50, 0.1); border: 1px solid rgba(50, 205, 50, 0.4); border-radius: 8px;">
+      <h3 style="margin-top:0; color: #32cd32; text-shadow: 0 0 3px rgba(50, 205, 50, 0.5);">New Signups</h3>
+      <ul id="signup-list" style="list-style: none; padding: 0;"></ul>
+      <button id="clear-signups" style="width: auto; padding: 5px 10px; font-size: 0.9em; background-color: rgba(255, 0, 0, 0.5); margin-top: 10px;">Clear All</button>
+    </div>
+  </div>
+  <h2>Welcome, <span id="user-name"></span></h2>
+  <div id="welcome-message"></div>
+  <div id="status"></div>
+  <button id="logout">Logout</button>
+  <button id="chat-button">Open Calls</button>
+  <button id="chat2-button">Chat 2.0</button>
+  <button id="direct-messages-button" class="action-button">Direct Messages</button>
+  <button id="update-name" style="margin-top:10px;">Update Name</button>
+  <div class="action-buttons" style="margin-top:15px;">
+    <button id="units-button" onclick="showSection('units-screen')">Our Units Are...</button>
+    <button id="codes-button" onclick="showSection('codes-screen')">Codes</button>
+  </div>
+  <button id="show-logins" style="margin-top:10px;">Show Login History</button>
+  <div id="login-history"></div>
+</div>
+
+<!-- Chat Screen -->
+<div class="container hidden" id="chat-screen">
+  <div class="liquid-loader hidden"></div>
+  <h2>Open Calls</h2>
+  <div id="messages"></div>
+  <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
+    <textarea id="message-input" placeholder="Message..." rows="2" style="width: 100%; padding-right: 40px;"></textarea>
+    <img src="https://i.ibb.co/QFnyZ5Sk/download.png" alt="Icon" id="send-button" class="message-icon" style="position: absolute; right: 10px; top: 40%; transform: translateY(-50%); width:24px; height:auto; cursor:pointer;" />
+  </div>
+  <div id="chat1-typing-indicator" class="typing-indicator hidden">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <span>Someone is typing...</span>
+  </div>
+  <!-- Report Incident Button -->
+<button id="report-incident-btn">Report a Call</button>
+
+<!-- Report Incident Modal -->
+<div id="incident-modal" class="hidden">
+  <div class="modal-content">
+    <h3>Report Incident</h3>
+    <textarea id="incident-desc" placeholder="Describe the incident"></textarea>
+    <div id="incident-map" style="height:200px;"></div>
+    <button id="submit-incident">Submit</button>
+    <button id="close-incident-modal">Cancel</button>
+  </div>
+</div>
+
+<!-- Big Map Modal -->
+<div id="big-map-modal" class="hidden">
+  <div class="modal-content">
+    <div id="big-incident-map" style="height:400px;"></div>
+    <button id="close-big-map-modal">Close</button>
+  </div>
+</div>
+// <div id="mapPreviewContainer"></div>
+  <button id="send-button">Send</button>
+  <button id="fullscreen-toggle" style="margin-top:10px;">Full Screen</button>
+  <button class="back-button" id="back-to-main">Back</button>
+  <button id="cancel-edit" class="hidden">Cancel</button>
+</div>
+
+<!-- Chat 2.0 Screen -->
+<div class="container hidden" id="chat2-screen">
+  <div class="liquid-loader hidden"></div>
+  <h2>Chat (Random not calls.)</h2>
+  <div id="messages2"></div>
+  <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
+    <textarea id="message-input2" placeholder="Leave a message..." rows="2" style="width: 100%; padding-right: 40px;"></textarea>
+    <img src="https://i.ibb.co/QFnyZ5Sk/download.png" alt="Send" id="send-icon2" style="position: absolute; right: 10px; top: 36%; transform: translateY(-50%); width:26px; height:auto; cursor:pointer;" />
+  </div>
+  <button id="send-button2">Send</button>
+  <div id="chat2-typing-indicator" class="typing-indicator hidden">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <span>Someone is typing...</span>
+  </div>
+  <button id="fullscreen-toggle2" style="margin-top:10px;">Full Screen</button>
+  <button class="back-button" id="back-to-main2">Back</button>
+  <button id="cancel-edit2" class="hidden">Cancel</button>
+</div>
+
+<div id="dm-screen" class="container hidden">
+  <div class="dm-header">
+    <button id="back-from-dm" class="back-button">&lt; Back</button>
+    <h2>Direct Messages</h2>
+    <button id="new-dm-button" class="action-button new-dm-button">New DM</button>
+  </div>
+  <div id="dm-user-list" class="user-list-container hidden">
+    <h3>Select a User</h3>
+    <ul id="dm-users-ul" class="dm-user-list"></ul>
+  </div>
+  <div id="dm-conversation-area" class="chat-messages-container hidden">
+    <div class="dm-conversation-header">
+      <button id="back-from-conversation" class="back-button">&lt; Back</button>
+      <h3 id="dm-recipient-name"></h3>
+    </div>
+    <div id="dm-messages" class="chat-messages"></div>
+    <div class="message-input-area">
+      <textarea id="dm-message-input" placeholder="Type a message..."></textarea>
+      <button id="dm-send-button" class="send-button">
+        <img id="dm-send-icon" src="i.ibb.co/CByP4r1/send-icon.png" alt="Send">
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Units Screen -->
+<div class="container hidden" id="units-screen">
+  <h2 style="color:darkblue;">Our Units Are</h2>
+  <ol>
+    <li>Director - 82</li>
+    <li>Assistant Director - 83</li>
+    <li>Coordinator - 95</li>
+    <li>Coordinator - 93</li>
+    <li>Operator - 92</li>
+    <li>Central - 101</li>
+  </ol>
+  <button class="back-button" id="back-from-units">Back</button>
+</div>
+
+<!-- Codes Screen -->
+<div class="container hidden" id="codes-screen">
+  <h2 style="color:darkblue;">Codes</h2>
+  <ul>
+    <li>51 - Busy</li>
+    <li>59 - Shutting Off</li>
+    <li>82 - Stabbing</li>
+    <li>91 - Mission Accomplished!</li>
+  </ul>
+  <button class="back-button" id="back-from-codes">Back</button>
+</div>
+
+<!-- Settings Screen -->
+<div class="container hidden" id="settings-screen">
+  <h2>Settings</h2>
+  <div style="margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: rgba(255,255,255,0.05);">
+    <h3>Change Avatar</h3>
+    <div style="text-align: center; margin-bottom: 15px;">
+      <img id="avatar-preview" src="" alt="Avatar Preview" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #32cd32; display: none;"/>
+      <p id="avatar-placeholder" style="font-size: 1em; color: #aaa;">No image selected</p>
+    </div>
+    <input type="file" id="avatar-file-input" accept="image/*" style="margin-bottom: 10px; display: block; width: 100%;"/>
+    <button id="upload-avatar-btn" style="background-color: #32cd32; font-size: 1em; padding: 8px; margin-top: 5px;">Upload Avatar</button>
+    <p id="avatar-upload-status" style="margin-top: 10px; font-size: 0.9em; color: #fff;"></p>
+  </div>
+  <button id="enroll-nfc-button" style="background-color: #32cd23; font-size: 1.1em; padding: 8px; margin-top: 15px;">Enroll NFC Tag</button>
+  <p id="nfc-status" style="margin-top: 10px; font-size: 0.9em; color: #fff; text-align: center;"></p>
+  <button id="back-from-settings">Back</button>
+  <button id="add-button" style="margin-top:10px;">Add</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="module" src="main.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</div>
+</body>
+</html>
