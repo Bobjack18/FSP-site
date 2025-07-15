@@ -1632,11 +1632,20 @@ function setupNfc() {
     const nfcStatus = document.getElementById('nfc-status');
 
     // Check if Web NFC API is available
+    const isDesktop = window.innerWidth > 900;
     if (!('NDEFReader' in window)) {
         loginNfcStatus.textContent = 'Web NFC not supported in this browser';
         nfcStatus.textContent = 'Web NFC not supported in this browser';
         loginNfcButton.disabled = true;
         enrollNfcButton.disabled = true;
+        // On desktop, hide the buttons or show a tooltip
+        if (isDesktop) {
+            loginNfcButton.style.display = 'none';
+            enrollNfcButton.style.display = 'none';
+        } else {
+            loginNfcButton.title = 'NFC only available on supported mobile devices';
+            enrollNfcButton.title = 'NFC only available on supported mobile devices';
+        }
         return;
     }
 

@@ -1,4 +1,4 @@
-﻿/* ==============================================
+/* ==============================================
    PROFESSIONAL CHAT APPLICATION STYLES
    ============================================== */
 
@@ -271,6 +271,113 @@ body.dark-theme button:hover {
 
 
 /* Special button styles */
+
+/* =============================
+   RESPONSIVE DESIGN FOR DESKTOP
+   ============================= */
+
+@media (min-width: 900px) {
+  .container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 32px 40px;
+    font-size: 1.1em;
+  }
+  #main-content, #chat-screen, #chat2-screen, #dm-screen {
+    min-height: 550px;
+  }
+  .action-buttons {
+    flex-direction: row;
+    gap: 24px;
+    justify-content: center;
+  }
+  /* DM: side-by-side layout */
+  #dm-screen {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: flex-start;
+    min-height: 500px;
+  }
+  #dm-list, .user-list-container {
+    width: 250px;
+    min-width: 200px;
+    max-width: 300px;
+    border-right: 1px solid #eee;
+    padding-right: 20px;
+    margin-bottom: 0;
+    height: 100%;
+    overflow-y: auto;
+  }
+  #dm-messages {
+    flex-grow: 1;
+    min-width: 350px;
+    max-width: 100%;
+    margin-left: 24px;
+    min-height: 400px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 16px 24px;
+  }
+  .dm-header, .dm-conversation-header {
+    font-size: 1.2em;
+    padding-bottom: 10px;
+  }
+  .message-input-area, #dm-message-input {
+    font-size: 1.1em;
+    padding: 16px;
+  }
+  /* Chat layout improvements */
+  #messages, #messages2 {
+    min-height: 400px;
+    font-size: 1.1em;
+  }
+  /* Map area larger on desktop */
+  #incident-map, #big-incident-map {
+    height: 350px !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1100px;
+    padding: 48px 60px;
+    font-size: 1.15em;
+  }
+  #dm-list, .user-list-container {
+    width: 320px;
+  }
+  #dm-messages {
+    min-width: 500px;
+    font-size: 1.12em;
+  }
+  #incident-map, #big-incident-map {
+    height: 450px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 12px 3vw;
+    font-size: 1em;
+  }
+  #dm-screen {
+    flex-direction: column !important;
+    gap: 0;
+  }
+  #dm-list, .user-list-container {
+    width: 100%;
+    max-width: 100%;
+    border-right: none;
+    padding-right: 0;
+    margin-bottom: 20px;
+  }
+  #dm-messages {
+    margin-left: 0;
+    min-width: 0;
+  }
+}
+
 .back-button {
   margin-right: var(--spacing-md);
   font-size: 1.2em;
