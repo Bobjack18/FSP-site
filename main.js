@@ -698,6 +698,16 @@ listenForTypingStatus('messages_v2', 'chat2-typing-indicator'); // Start listeni
           L.marker([msg.location.lat, msg.location.lng]).addTo(map);
           mapDiv.onclick = () => showBigMap(msg.location);
         }, 100);
+
+        if (msg.address) {
+          const addressDiv = document.createElement('div');
+          addressDiv.className = 'message-address';
+          addressDiv.innerText = msg.address;
+          addressDiv.style.fontSize = '12px';
+          addressDiv.style.color = '#666';
+          addressDiv.style.marginTop = '4px';
+          bubble.appendChild(addressDiv);
+        }
       }
 
       // Append bubble to message container
@@ -868,6 +878,16 @@ msgDiv.appendChild(bubble);
           L.marker([msg.location.lat, msg.location.lng]).addTo(map);
           mapDiv.onclick = () => showBigMap(msg.location);
         }, 100);
+
+        if (msg.address) {
+          const addressDiv = document.createElement('div');
+          addressDiv.className = 'message-address';
+          addressDiv.innerText = msg.address;
+          addressDiv.style.fontSize = '12px';
+          addressDiv.style.color = '#666';
+          addressDiv.style.marginTop = '4px';
+          bubble.appendChild(addressDiv);
+        }
       }
 
       // Append bubble to message container
@@ -1619,18 +1639,24 @@ function initIncidentMap() {
   });
 }
 
-// Submit Incident
-document.getElementById('submit-incident').onclick = function() {
+
+                    }// Submit Incident
+document.getElementById('submit-incident').onclick = async function() {
   const desc = document.getElementById('incident-desc').value.trim();
   if (!desc || !incidentLatLng) {
     alert("Please provide a description and location");
     return;
   }
-  // Save to Firebase (add a 'location' field)
+
+  // Get address from coordinates
+  const address = await getAddressFromLatLng(incidentLatLng.lat, incidentLatLng.lng);
+
+  // Save to Firebase (add a 'location' and 'address' field)
   const user = auth.currentUser;
   push(ref(database, 'messages'), {
     text: desc,
     location: { lat: incidentLatLng.lat, lng: incidentLatLng.lng },
+    address: address,
     timestamp: serverTimestamp(),
     sender: user ? (user.displayName || user.email || 'Anonymous') : 'Anonymous'
   });
@@ -1660,6 +1686,18 @@ function renderMessage(msg) {
     }, 100);
   }
   return container;
+}
+
+// Function to get address from coordinates
+async function getAddressFromLatLng(lat, lng) {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    const data = await response.json();
+    return data.display_name || 'Address not found';
+  } catch (error) {
+    console.error('Error fetching address:', error);
+    return 'Address lookup failed';
+  }
 }
 
 // Show big map modal
@@ -1725,7 +1763,6 @@ function setupNfc() {
                                 loginNfcStatus.textContent = `Login failed: ${error.message}`;
                                 console.error('NFC login error:', error);
                             });
-                    }
                 }
             });
         } catch (error) {
