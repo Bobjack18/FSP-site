@@ -674,6 +674,31 @@ listenForTypingStatus('messages_v2', 'chat2-typing-indicator'); // Start listeni
       // Append message text
       bubble.appendChild(textDiv);
 
+      // Add map if message has location (from incident reports)
+      if (msg.location) {
+        const mapDiv = document.createElement('div');
+        mapDiv.style.width = '120px';
+        mapDiv.style.height = '80px';
+        mapDiv.style.cursor = 'pointer';
+        mapDiv.style.marginTop = '8px';
+        mapDiv.style.borderRadius = '8px';
+        mapDiv.style.overflow = 'hidden';
+        mapDiv.className = 'mini-map';
+        bubble.appendChild(mapDiv);
+        
+        // Initialize small map after element is in DOM
+        setTimeout(() => {
+          const map = L.map(mapDiv, { 
+            attributionControl: false, 
+            zoomControl: false, 
+            dragging: false, 
+            scrollWheelZoom: false 
+          }).setView([msg.location.lat, msg.location.lng], 15);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+          L.marker([msg.location.lat, msg.location.lng]).addTo(map);
+          mapDiv.onclick = () => showBigMap(msg.location);
+        }, 100);
+      }
 
       // Append bubble to message container
       // --- NEW: Add the reaction bar HTML dynamically ---
@@ -819,6 +844,31 @@ msgDiv.appendChild(bubble);
       // Append message text
       bubble.appendChild(textDiv);
 
+      // Add map if message has location (from incident reports)
+      if (msg.location) {
+        const mapDiv = document.createElement('div');
+        mapDiv.style.width = '120px';
+        mapDiv.style.height = '80px';
+        mapDiv.style.cursor = 'pointer';
+        mapDiv.style.marginTop = '8px';
+        mapDiv.style.borderRadius = '8px';
+        mapDiv.style.overflow = 'hidden';
+        mapDiv.className = 'mini-map';
+        bubble.appendChild(mapDiv);
+        
+        // Initialize small map after element is in DOM
+        setTimeout(() => {
+          const map = L.map(mapDiv, { 
+            attributionControl: false, 
+            zoomControl: false, 
+            dragging: false, 
+            scrollWheelZoom: false 
+          }).setView([msg.location.lat, msg.location.lng], 15);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+          L.marker([msg.location.lat, msg.location.lng]).addTo(map);
+          mapDiv.onclick = () => showBigMap(msg.location);
+        }, 100);
+      }
 
       // Append bubble to message container
       msgDiv.appendChild(bubble);
