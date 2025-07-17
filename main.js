@@ -1056,10 +1056,10 @@ onAuthStateChanged(auth, (user) => {
       toggleBtn.addEventListener('click', () => {
         if (input.type === 'password') {
           input.type = 'text';
-          toggleBtn.innerText = '🙈';
+          toggleBtn.innerText = '👁';
         } else {
           input.type = 'password';
-          toggleBtn.innerText = '👁️';
+          toggleBtn.innerText = '(ø)';
         }
       });
     });
@@ -1577,15 +1577,17 @@ document.getElementById('submit-incident').onclick = function() {
     return;
   }
   // Save to Firebase (add a 'location' field)
+  const user = auth.currentUser;
   push(ref(database, 'messages'), {
     text: desc,
     location: { lat: incidentLatLng.lat, lng: incidentLatLng.lng },
     timestamp: serverTimestamp(),
-    sender: user.displayName || user.email || 'Anonymous'
+    sender: user ? (user.displayName || user.email || 'Anonymous') : 'Anonymous'
   });
   document.getElementById('incident-modal').classList.add('hidden');
   document.getElementById('incident-desc').value = '';
   incidentLatLng = null;
+  alert("Incident reported successfully!");
 };
 
 // Render Map in Chat Messages

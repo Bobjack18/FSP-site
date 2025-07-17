@@ -1461,11 +1461,50 @@ body.dark-theme ::-webkit-scrollbar-thumb:hover {
   100% { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
 }
 .hidden { display: none; }
-#incident-modal, #big-map-modal {
+#incident-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--background-dark);
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  border: 2px solid var(--accent-color);
+  box-shadow: 0 0 15px rgba(50, 205, 50, 0.5);
+}
+
+body.light-theme .modal-content {
+  background: var(--background-light);
+}
+
+#incident-desc {
+  width: 100%;
+  height: 100px;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-dark);
+  resize: vertical;
+}
+
+#incident-map {
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid var(--accent-color);
+}
+#big-map-modal {
   position: fixed; top:0; left:0; width:100vw; height:100vh;
   background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
   z-index: 1000;
-}
-.modal-content {
-  background: #fff; padding: 20px; border-radius: 8px; min-width: 300px;
 }
