@@ -1056,10 +1056,10 @@ onAuthStateChanged(auth, (user) => {
       toggleBtn.addEventListener('click', () => {
         if (input.type === 'password') {
           input.type = 'text';
-          toggleBtn.innerText = 'Show/Hide Password';
+          toggleBtn.innerText = '🙈';
         } else {
           input.type = 'password';
-          toggleBtn.innerText = 'Show/Hide';
+          toggleBtn.innerText = '👁️';
         }
       });
     });
