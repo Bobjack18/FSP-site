@@ -1640,7 +1640,7 @@ function initIncidentMap() {
 }
 
 
-                    }// Submit Incident
+                    // Submit Incident
 document.getElementById('submit-incident').onclick = async function() {
   const desc = document.getElementById('incident-desc').value.trim();
   if (!desc || !incidentLatLng) {
