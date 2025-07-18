@@ -1719,7 +1719,7 @@ function setupNfc() {
     const loginNfcButton = document.getElementById('login-with-nfc-button');
     const loginNfcStatus = document.getElementById('login-nfc-status');
     const enrollNfcButton = document.getElementById('enroll-nfc-button');
-    const nfcStatus = document.getElementById('nfc-status');
+    const nfcStatus = document.getElementById('nfc-status')};
 
     // Check if Web NFC API is available
     const isDesktop = window.innerWidth > 900;
