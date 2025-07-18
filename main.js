@@ -1811,15 +1811,19 @@ function setupDirectMessaging() {
     const dmInput = document.getElementById('dm-input');
     const dmSendButton = document.getElementById('dm-send-button');
 
+// ... inside setupDirectMessaging()
     // Fetch and display users for DM
     function loadDMUsers() {
-        const usersRef = firebase.database().ref('users');
-        usersRef.once('value').then((snapshot) => {
+        // FIX: Use your 'database' object with 'ref' and 'get' (or 'onValue' if real-time)
+        // Note: Using 'get' here as you use 'once' in original, which fetches data once.
+        const usersRef = ref(database, 'users'); // <--- FIXED LINE
+        get(usersRef).then((snapshot) => { // Use 'get' for 'once' functionality
             dmList.innerHTML = '';
             let userCount = 0;
             snapshot.forEach((userSnapshot) => {
                 const user = userSnapshot.val();
-                if (user.uid !== firebase.auth().currentUser.uid) {
+                // FIX: Use your 'auth' object directly
+                if (user.uid !== auth.currentUser.uid) { // <--- FIXED LINE
                     const userElement = document.createElement('div');
                     userElement.className = 'dm-user';
                     userElement.innerHTML = `
@@ -1850,30 +1854,20 @@ function setupDirectMessaging() {
         dmScreen.style.display = 'block';
         
         // Clear previous messages and listener
-        dmMessagesContainer.innerHTML = '';
-        if (dmMessagesListener) dmMessagesListener();
+        // The dmMessagesListener is correctly defined and used with 'off' elsewhere.
+        if (dmMessagesListener) off(dmMessagesListener); // Detach previous listener before attaching new one
         
         // Setup real-time message listener
-        const conversationId = [firebase.auth().currentUser.uid, recipientUid]
+        // FIX: Use your 'auth' object directly
+        const conversationId = [auth.currentUser.uid, recipientUid] // <--- FIXED LINE
             .sort().join('_');
             
-        dmMessagesRef = firebase.database().ref(`directMessages/${conversationId}`);
-        dmMessagesListener = dmMessagesRef.orderByChild('timestamp').on('child_added', (snapshot) => {
+        // FIX: Use your 'database' object with 'ref'
+        dmMessagesRef = query(ref(database, `directMessages/${conversationId}`), orderByChild('timestamp')); // <--- FIXED LINE (and added query for orderByChild)
+        dmMessagesListener = onChildAdded(dmMessagesRef, (snapshot) => { // Use onChildAdded for new messages
             const message = snapshot.val();
             displayMessage(message);
         });
-    }
-
-    // Display a message in DM
-    function displayMessage(message) {
-        const messageElement = document.createElement('div');
-        messageElement.className = `message ${message.senderId === firebase.auth().currentUser.uid ? 'sent' : 'received'}`;
-        messageElement.innerHTML = `
-            <div class="message-content">${message.text}</div>
-            <div class="message-time">${new Date(message.timestamp).toLocaleTimeString()}</div>
-        `;
-        dmMessagesContainer.appendChild(messageElement);
-        dmMessagesContainer.scrollTop = dmMessagesContainer.scrollHeight;
     }
 
     // Send DM message
@@ -1881,19 +1875,25 @@ function setupDirectMessaging() {
         const text = dmInput.value.trim();
         if (!text || !currentDmRecipientUid) return;
 
-        const conversationId = [firebase.auth().currentUser.uid, currentDmRecipientUid]
+        // FIX: Use your 'auth' object directly
+        const conversationId = [auth.currentUser.uid, currentDmRecipientUid] // <--- FIXED LINE
             .sort().join('_');
             
-        const messageRef = firebase.database().ref(`directMessages/${conversationId}`).push();
-        messageRef.set({
+        // FIX: Use your 'database' object with 'ref' and 'push'
+        const messageListRef = ref(database, `directMessages/${conversationId}`); // Reference to the list
+        const newMessageRef = push(messageListRef); // Get a new child location
+        newMessageRef.set({ // Set data at that location
             text: text,
-            senderId: firebase.auth().currentUser.uid,
+            // FIX: Use your 'auth' object directly
+            senderId: auth.currentUser.uid, // <--- FIXED LINE
             recipientId: currentDmRecipientUid,
-            timestamp: Date.now()
+            timestamp: serverTimestamp() // <--- RECOMMENDED: Use serverTimestamp() for consistency
         });
         
         dmInput.value = '';
     }
+// ...
+
 
     // Back button handler
     dmBackButton.addEventListener('click', () => {
