@@ -1754,7 +1754,7 @@ function setupNfc() {
                         loginNfcStatus.textContent = `Read UID: ${uid}`;
                         
                         // Attempt to sign in with the UID
-                        firebase.auth().signInWithCustomToken(uid)
+                        signInWithCustomToken(auth, uid)
                             .then((userCredential) => {
                                 loginNfcStatus.textContent = 'Login successful!';
                                 console.log('Signed in with NFC:', userCredential.user);
