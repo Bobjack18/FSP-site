@@ -14,8 +14,8 @@ if ('serviceWorker' in navigator) {
 
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-  import { getDatabase, ref, set, push, onValue, get, query, orderByChild, equalTo, serverTimestamp, remove, update,  off } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, updateProfile, sendPasswordResetEmail, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  import { getDatabase, ref, set, push, onValue, get, query, orderByChild, equalTo, serverTimestamp, remove, onChildAdded, update,  off } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 import { getRemoteConfig, fetchAndActivate, getValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-remote-config.js"; // <--- ADD THIS LINE
 
 
