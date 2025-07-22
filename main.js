@@ -32,6 +32,7 @@ if ('serviceWorker' in navigator) {
 
 
  const app = initializeApp(firebaseConfig);
+const functions = getFunctions(app);
  const auth = getAuth(app);
  const database = getDatabase(app);
 const remoteConfig = getRemoteConfig(app); // Initialize remoteConfig!
