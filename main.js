@@ -3421,11 +3421,17 @@ function initIncidentMap() {
                     // Submit Incident
 document.getElementById('submit-incident').onclick = async function() {
   const desc = document.getElementById('incident-desc').value.trim();
+    const currentUser = auth.currentUser; 
+
   if (!desc || !incidentLatLng) {
     alert("Please provide a description and location");
     return;
   }
-
+if (!currentUser) {
+    alert("You must be logged in to report an incident.");
+    showSection('login-form'); // Redirect them to the login screen
+    return; 
+  }
   // Get address from coordinates
   const address = await getAddressFromLatLng(incidentLatLng.lat, incidentLatLng.lng);
 
