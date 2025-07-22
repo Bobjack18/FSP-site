@@ -1,24 +1,23 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, updateProfile, sendPasswordResetEmail, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+import { getDatabase, ref, set, push, onValue, get, query, orderByChild, equalTo, serverTimestamp, remove, onChildAdded, update, off } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+import { getRemoteConfig, fetchAndActivate, getValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-remote-config.js"; // <--- ADD THIS LINE
 
-
+// --- Initialize EmailJS and register service-worker AFTER module imports ---
 (function () {
- emailjs.init({
- publicKey: 'ht7XX9d6xGC-H_Fd0', // <--- THIS IS KEY!
- });
- })();
+  emailjs.init({
+    publicKey: 'ht7XX9d6xGC-H_Fd0', // <--- THIS IS KEY!
+  });
+})();
 
 if ('serviceWorker' in navigator) {
- window.addEventListener('load', function() {
- navigator.serviceWorker.register('service-worker.js')
- .then(reg => console.log('SW registered', reg))
- .catch(err => console.error('SW registration failed', err));
- });
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then((reg) => console.log('SW registered', reg))
+      .catch((err) => console.error('SW registration failed', err));
+  });
 }
 
-
- import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
- import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, updateProfile, sendPasswordResetEmail, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
- import { getDatabase, ref, set, push, onValue, get, query, orderByChild, equalTo, serverTimestamp, remove, onChildAdded, update, off } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
-import { getRemoteConfig, fetchAndActivate, getValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-remote-config.js"; // <--- ADD THIS LINE
 
 
  const firebaseConfig = {
@@ -49,7 +48,6 @@ let dmMessagesListener = null; // Listener for direct messages
 
 
 const ADMIN_EMAIL = 'flatbushpatrol101@gmail.com'; // Replace with the actual admin email
-
 
  // =================== Presence Logic ====================
  const presenceCache = {}; // cache for presence status
@@ -281,39 +279,11 @@ document.getElementById('signup-submit').onclick = () => {
  const text = input.value.trim();
  if (!text) return;
 
-
  if (editingMessageId) {
   update(ref(database, 'messages/' + editingMessageId), { text }).then(() => {
-  editingMessageId = null;
-  input.value = '';
-  // ... (inside your 
-
-
- // --- NEW: Send email via EmailJS after successful message send (for Chat 1) ---
- const senderName = user.displayName || user.email || 'Anonymous'; // Make sure senderName is defined
- const chatType = "Open Calls"; // This identifies which chat it came from
-
-
- const templateParams = {
-  sender_name: senderName, // This matches {{sender_name}} in your EmailJS template
-  message_text: text, // This matches {{message_text}} in your EmailJS template
-  chat_type: chatType // This matches {{chat_type}} in your EmailJS template
- };
-
-
- // Call EmailJS to send the email!
- // REMEMBER to replace 'YOUR_EMAIL_SERVICE_ID' and 'YOUR_EMAIL_TEMPLATE_ID'
- emailjs.send('service_cvjcedu', 'template_3bhu90o', templateParams)
-  .then(function(response) {
-   console.log('Email for Open Calls successfully sent!', response.status, response.text);
-  }, function(error) {
-   console.error('Email for Open Calls failed to send...', error);
-   alert('Failed to send email notification for Open Calls. Check browser console.'); // Optional user alert
-  });
- // --- END NEW ---
-
-
-document.getElementById('cancel-edit').classList.add('hidden');
+   editingMessageId = null;
+   input.value = '';
+   document.getElementById('cancel-edit').classList.add('hidden');
   }).catch(e => alert('Error updating message: ' + e.message));
  } else {
   push(ref(database, 'messages'), {
@@ -1748,28 +1718,34 @@ function setupNfc() {
   const ndef = new NDEFReader();
   await ndef.scan();
   
-  ndef.addEventListener('reading', ({ message, serialNumber }) => {
-   for (const record of message.records) {
-    if (record.recordType === 'text') {
-    const textDecoder = new TextDecoder(record.encoding);
-    const uid = textDecoder.decode(record.data);
-    loginNfcStatus.textContent = `Read UID: ${uid}`;
-    
-    // Attempt to sign in with the UID
-    signInWithCustomToken(auth, uid)
-     .then((userCredential) => {
-      loginNfcStatus.textContent = 'Login successful!';
-      console.log('Signed in with NFC:', userCredential.user);
-     })
-     .catch((error) => {
-      loginNfcStatus.textContent = `Login failed: ${error.message}`;
-      console.error('NFC login error:', error);
-     });
-   }
-  });
+   ndef.addEventListener('reading', ({ message }) => {
+    try {
+     for (const record of message.records) {
+      if (record.recordType === 'text') {
+       const textDecoder = new TextDecoder(record.encoding);
+       const uid = textDecoder.decode(record.data);
+       loginNfcStatus.textContent = `Read UID: ${uid}`;
+
+       // Attempt to sign in with the UID
+       signInWithCustomToken(auth, uid)
+        .then((userCredential) => {
+         loginNfcStatus.textContent = 'Login successful!';
+         console.log('Signed in with NFC:', userCredential.user);
+        })
+        .catch((error) => {
+         loginNfcStatus.textContent = `Login failed: ${error.message}`;
+         console.error('NFC login error:', error);
+        });
+      }
+     }
+    } catch (error) {
+     loginNfcStatus.textContent = `Error processing NFC message: ${error}`;
+     console.error('NFC reading error', error);
+    }
+   });
   } catch (error) {
-  loginNfcStatus.textContent = `Error: ${error}`;
-  console.error('NFC scan error', error);
+   loginNfcStatus.textContent = `Error: ${error}`;
+   console.error('NFC scan error', error);
   }
  });
 
