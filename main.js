@@ -34,7 +34,6 @@ if ('serviceWorker' in navigator) {
  const app = initializeApp(firebaseConfig);
  const auth = getAuth(app);
 window.auth = auth; // This makes your 'auth' object globally accessible for testing
-window.database = database; // Do the same for 'database' if you want to use it in console
  const database = getDatabase(app);
 const remoteConfig = getRemoteConfig(app); // Initialize remoteConfig!
  remoteConfig.minimumFetchIntervalMillis = 0; // Crucial for quick testing, set to 0 for development
